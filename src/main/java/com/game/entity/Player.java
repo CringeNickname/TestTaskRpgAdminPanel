@@ -3,34 +3,39 @@ package com.game.entity;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
+import javax.transaction.Transactional;
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name = "player")
-public class Player {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class Player implements Serializable {
     private Long id;
-    @Column(name = "name")
     private String name;
-    @Column(name = "title")
     private String title;
-    @Column(name = "race")
     private Race race;
-    @Column(name = "profession")
     private Profession profession;
-    @Column(name = "birthday")
     private Date birthday;
-    @Column(name = "banned")
     private Boolean banned;
-    @Column(name = "experience")
     private Integer experience;
-    @Column(name = "level")
     private Integer level;
-    @Column(name = "untilNextLevel")
     private Integer untilNextLevel;
 
+    public Player(Long id, String name, String title, Race race, Profession profession, Date birthday, Boolean banned, Integer experience, Integer level, Integer untilNextLevel) {
+        this.id = id;
+        this.name = name;
+        this.title = title;
+        this.race = race;
+        this.profession = profession;
+        this.birthday = birthday;
+        this.banned = banned;
+        this.experience = experience;
+        this.level = level;
+        this.untilNextLevel = untilNextLevel;
+    }
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long getId() {
         return id;
     }
@@ -39,6 +44,7 @@ public class Player {
         this.id = id;
     }
 
+    @Column(name = "name")
     public String getName() {
         return name;
     }
@@ -47,6 +53,7 @@ public class Player {
         this.name = name;
     }
 
+    @Column(name = "title")
     public String getTitle() {
         return title;
     }
@@ -55,6 +62,7 @@ public class Player {
         this.title = title;
     }
 
+    @Column(name = "race")
     public Race getRace() {
         return race;
     }
@@ -63,6 +71,7 @@ public class Player {
         this.race = race;
     }
 
+    @Column(name = "profession")
     public Profession getProfession() {
         return profession;
     }
@@ -71,6 +80,7 @@ public class Player {
         this.profession = profession;
     }
 
+    @Column(name = "birthday")
     public Date getBirthday() {
         return birthday;
     }
@@ -79,6 +89,7 @@ public class Player {
         this.birthday = birthday;
     }
 
+    @Column(name = "banned")
     public Boolean getBanned() {
         return banned;
     }
@@ -87,6 +98,7 @@ public class Player {
         this.banned = banned;
     }
 
+    @Column(name = "experience")
     public Integer getExperience() {
         return experience;
     }
@@ -95,6 +107,7 @@ public class Player {
         this.experience = experience;
     }
 
+    @Column(name = "level")
     public Integer getLevel() {
         return level;
     }
@@ -103,11 +116,28 @@ public class Player {
         this.level = level;
     }
 
+    @Column(name = "untilNextLevel")
     public Integer getUntilNextLevel() {
         return untilNextLevel;
     }
 
     public void setUntilNextLevel(Integer untilNextLevel) {
         this.untilNextLevel = untilNextLevel;
+    }
+
+    @Override
+    public String toString() {
+        return "Player{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", title='" + title + '\'' +
+                ", race=" + race +
+                ", profession=" + profession +
+                ", birthday=" + birthday +
+                ", banned=" + banned +
+                ", experience=" + experience +
+                ", level=" + level +
+                ", untilNextLevel=" + untilNextLevel +
+                '}';
     }
 }
