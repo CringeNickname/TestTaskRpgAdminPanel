@@ -29,7 +29,7 @@ public class Player {
     @Column(name = "banned")
     private Boolean banned;
 
-    @Column(name = "experience")
+    @Column(name = "experience", length = 10_000_000)
     private Integer experience;
 
     @Column(name = "level")
