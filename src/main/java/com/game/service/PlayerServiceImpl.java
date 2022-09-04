@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+
 @Service
 public class PlayerServiceImpl implements PlayerService {
     private final PlayerRepository playerRepository;
@@ -17,7 +18,7 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     public Player findById(Long id) {
-        return playerRepository.getOne(id);
+        return playerRepository.findById(id).get();
     }
 
     public List<Player> findAll() {

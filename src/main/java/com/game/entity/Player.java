@@ -1,41 +1,43 @@
 package com.game.entity;
 
-import org.springframework.stereotype.Component;
-
 import javax.persistence.*;
-import javax.transaction.Transactional;
-import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name = "player")
-public class Player implements Serializable {
-    private Long id;
-    private String name;
-    private String title;
-    private Race race;
-    private Profession profession;
-    private Date birthday;
-    private Boolean banned;
-    private Integer experience;
-    private Integer level;
-    private Integer untilNextLevel;
-
-    public Player(Long id, String name, String title, Race race, Profession profession, Date birthday, Boolean banned, Integer experience, Integer level, Integer untilNextLevel) {
-        this.id = id;
-        this.name = name;
-        this.title = title;
-        this.race = race;
-        this.profession = profession;
-        this.birthday = birthday;
-        this.banned = banned;
-        this.experience = experience;
-        this.level = level;
-        this.untilNextLevel = untilNextLevel;
-    }
-
+public class Player {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    private Long id;
+
+    @Column(name = "name", length = 12)
+    private String name;
+
+    @Column(name = "title", length = 30)
+    private String title;
+
+    @Enumerated(EnumType.STRING)
+    private Race race;
+
+    @Enumerated(EnumType.STRING)
+    private Profession profession;
+
+    @Column(name = "birthday")
+    private Date birthday;
+
+    @Column(name = "banned")
+    private Boolean banned;
+
+    @Column(name = "experience")
+    private Integer experience;
+
+    @Column(name = "level")
+    private Integer level;
+
+    @Column(name = "untilNextLevel")
+    private Integer untilNextLevel;
+
     public Long getId() {
         return id;
     }
@@ -44,7 +46,6 @@ public class Player implements Serializable {
         this.id = id;
     }
 
-    @Column(name = "name")
     public String getName() {
         return name;
     }
@@ -53,7 +54,6 @@ public class Player implements Serializable {
         this.name = name;
     }
 
-    @Column(name = "title")
     public String getTitle() {
         return title;
     }
@@ -62,7 +62,6 @@ public class Player implements Serializable {
         this.title = title;
     }
 
-    @Column(name = "race")
     public Race getRace() {
         return race;
     }
@@ -71,7 +70,6 @@ public class Player implements Serializable {
         this.race = race;
     }
 
-    @Column(name = "profession")
     public Profession getProfession() {
         return profession;
     }
@@ -80,7 +78,6 @@ public class Player implements Serializable {
         this.profession = profession;
     }
 
-    @Column(name = "birthday")
     public Date getBirthday() {
         return birthday;
     }
@@ -89,7 +86,6 @@ public class Player implements Serializable {
         this.birthday = birthday;
     }
 
-    @Column(name = "banned")
     public Boolean getBanned() {
         return banned;
     }
@@ -98,7 +94,6 @@ public class Player implements Serializable {
         this.banned = banned;
     }
 
-    @Column(name = "experience")
     public Integer getExperience() {
         return experience;
     }
@@ -107,7 +102,6 @@ public class Player implements Serializable {
         this.experience = experience;
     }
 
-    @Column(name = "level")
     public Integer getLevel() {
         return level;
     }
@@ -116,7 +110,6 @@ public class Player implements Serializable {
         this.level = level;
     }
 
-    @Column(name = "untilNextLevel")
     public Integer getUntilNextLevel() {
         return untilNextLevel;
     }
@@ -125,19 +118,4 @@ public class Player implements Serializable {
         this.untilNextLevel = untilNextLevel;
     }
 
-    @Override
-    public String toString() {
-        return "Player{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", title='" + title + '\'' +
-                ", race=" + race +
-                ", profession=" + profession +
-                ", birthday=" + birthday +
-                ", banned=" + banned +
-                ", experience=" + experience +
-                ", level=" + level +
-                ", untilNextLevel=" + untilNextLevel +
-                '}';
-    }
 }
