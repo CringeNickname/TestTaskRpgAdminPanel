@@ -120,6 +120,49 @@ public class PlayerRestController {
         return new ResponseEntity<>(player, HttpStatus.OK);
     }
 
+    @RequestMapping(value = "", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Player> createPlayer(@RequestBody Player playerToCreate) {
+        List<Player> players = this.playerService.findAll();
+        playerToCreate.setId((long) (players.size() + 1));
+
+        // Check if all necessary field are in data params.
+        if (playerToCreate.getName() == null
+                || playerToCreate.getTitle() == null
+                || playerToCreate.getRace() == null
+                || playerToCreate.getProfession() == null
+                || playerToCreate.getBirthday() == null
+                || playerToCreate.getExperience() == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        // Check the length of name and title fields.
+        if (playerToCreate.getName().length() > 12 || playerToCreate.getTitle().length() > 30) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        // Check if date is after 1970.
+        if (playerToCreate.getBirthday().getTime() < 0) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        // Checks for experience field. It should be in range from 0 to 10_000_000.
+        if (playerToCreate.getExperience() < 0 || playerToCreate.getExperience() > 10_000_000) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        // Check if isBanned is specified in the request, if not set false on default.
+        if (playerToCreate.isBanned() == null) {
+            playerToCreate.setBanned(false);
+        }
+
+        // Calculation of level and experience.
+        playerToCreate.setLevel((int) Math.floor((Math.sqrt((2500 + (playerToCreate.getExperience() * 200))) - 50) / 100F));
+        playerToCreate.setUntilNextLevel((50 * (playerToCreate.getLevel() + 1) * (playerToCreate.getLevel() + 2)) - playerToCreate.getExperience());
+
+        this.playerService.savePlayer(playerToCreate);
+        return new ResponseEntity<>(playerToCreate, HttpStatus.OK);
+    }
+
     @RequestMapping(value = "{id}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Player> updatePlayer(@PathVariable String id, @RequestBody Player updatedPlayer) {
         // Check if ID is a number and more than 0.
@@ -150,6 +193,11 @@ public class PlayerRestController {
         if (updatedPlayer.getBirthday() == null) updatedPlayer.setBirthday(playerToUpdate.getBirthday());
         if (updatedPlayer.isBanned() == null) updatedPlayer.setBanned(playerToUpdate.isBanned());
         if (updatedPlayer.getExperience() == null) updatedPlayer.setExperience(playerToUpdate.getExperience());
+
+        // Check the length of name and title fields.
+        if (updatedPlayer.getName().length() > 12 || updatedPlayer.getTitle().length() > 30) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 
         // Checks for experience field. It should be in range from 0 to 10_000_000.
         if (updatedPlayer.getExperience() < 0 || updatedPlayer.getExperience() > 10_000_000) {
