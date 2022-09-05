@@ -4,10 +4,10 @@ import com.game.entity.Player;
 import com.game.entity.Profession;
 import com.game.entity.Race;
 
-import com.game.rest.comparators.BirthdayComparator;
-import com.game.rest.comparators.ExperienceComparator;
-import com.game.rest.comparators.IdComparator;
-import com.game.rest.comparators.NameComparator;
+import com.game.rest.comparator.BirthdayComparator;
+import com.game.rest.comparator.ExperienceComparator;
+import com.game.rest.comparator.IdComparator;
+import com.game.rest.comparator.NameComparator;
 import com.game.service.FilterService;
 import com.game.service.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -117,6 +118,79 @@ public class PlayerRestController {
 
         }
         return new ResponseEntity<>(player, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "{id}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Player> updatePlayer(@PathVariable String id, @RequestBody Player updatedPlayer) {
+        // Check if ID is a number and more than 0.
+        try {
+            Long idLong = Long.parseLong(id);
+            if (idLong <= 0) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+        }
+        catch (NumberFormatException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        Long idLong = Long.parseLong(id);
+
+        Player playerToUpdate = this.playerService.findById(idLong);
+        // Check if player exist
+        if (playerToUpdate == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        // Various checks for null fields. If field is null then we don't update it.
+        if (updatedPlayer.getId() == null) updatedPlayer.setId(playerToUpdate.getId());
+        if (updatedPlayer.getName() == null) updatedPlayer.setName(playerToUpdate.getName());
+        if (updatedPlayer.getTitle() == null) updatedPlayer.setTitle(playerToUpdate.getTitle());
+        if (updatedPlayer.getRace() == null) updatedPlayer.setRace(playerToUpdate.getRace());
+        if (updatedPlayer.getProfession() == null) updatedPlayer.setProfession(playerToUpdate.getProfession());
+        if (updatedPlayer.getBirthday() == null) updatedPlayer.setBirthday(playerToUpdate.getBirthday());
+        if (updatedPlayer.isBanned() == null) updatedPlayer.setBanned(playerToUpdate.isBanned());
+        if (updatedPlayer.getExperience() == null) updatedPlayer.setExperience(playerToUpdate.getExperience());
+
+        // Checks for experience field. It should be in range from 0 to 10_000_000.
+        if (updatedPlayer.getExperience() < 0 || updatedPlayer.getExperience() > 10_000_000) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        // Check if date is after 1970.
+        if (updatedPlayer.getBirthday().getTime() < 0) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+
+        this.playerService.deletePlayer(playerToUpdate);
+        updatedPlayer.setId(idLong);
+        // Calculation of level and experience.
+        updatedPlayer.setLevel((int) Math.floor((Math.sqrt((2500 + (updatedPlayer.getExperience() * 200))) - 50) / 100F));
+        updatedPlayer.setUntilNextLevel((50 * (updatedPlayer.getLevel() + 1) * (updatedPlayer.getLevel() + 2)) - updatedPlayer.getExperience());
+
+        this.playerService.savePlayer(updatedPlayer);
+        return new ResponseEntity<>(updatedPlayer, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Player> deletePlayer(@PathVariable String id) {
+        try {
+            Player player = this.playerService.findById(Long.parseLong(id));
+            if (Long.parseLong(id) == 0) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            if (player == null) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+
+
+
+            this.playerService.deletePlayer(player);
+            return new ResponseEntity<>(player, HttpStatus.OK);
+        }
+        catch (NumberFormatException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
 

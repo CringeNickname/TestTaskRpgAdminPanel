@@ -1,4 +1,4 @@
-package com.game.rest.comparators;
+package com.game.rest.comparator;
 
 import com.game.entity.Player;
 

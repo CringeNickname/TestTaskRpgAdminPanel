@@ -11,7 +11,7 @@ public interface PlayerService {
 
     List<Player> findAll();
 
-    Player createPlayer(Player player);
+    Player savePlayer(Player player);
 
     void deletePlayer(Player player);
 }

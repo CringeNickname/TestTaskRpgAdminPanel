@@ -31,7 +31,7 @@ public class PlayerServiceImpl implements PlayerService {
         return playerRepository.findAll();
     }
 
-    public Player createPlayer(Player player) {
+    public Player savePlayer(Player player) {
         return playerRepository.save(player);
     }
 
