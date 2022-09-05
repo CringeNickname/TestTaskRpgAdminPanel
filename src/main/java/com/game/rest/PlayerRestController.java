@@ -3,10 +3,11 @@ package com.game.rest;
 import com.game.entity.Player;
 import com.game.entity.Profession;
 import com.game.entity.Race;
-import com.game.rest.Comparators.BirthdayComparator;
-import com.game.rest.Comparators.ExperienceComparator;
-import com.game.rest.Comparators.IdComparator;
-import com.game.rest.Comparators.NameComparator;
+
+import com.game.rest.comparators.BirthdayComparator;
+import com.game.rest.comparators.ExperienceComparator;
+import com.game.rest.comparators.IdComparator;
+import com.game.rest.comparators.NameComparator;
 import com.game.service.FilterService;
 import com.game.service.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -97,6 +96,27 @@ public class PlayerRestController {
         filterService.filter(players, name, title, before, after, race, profession, banned, minExperience, maxExperience, minLevel, maxLevel);
 
         return new ResponseEntity<>(players.size(), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Player> getPlayer(@PathVariable String id) {
+        // That's a very bad way to check if id is Integer
+        try {
+            int intId = Integer.parseInt(id);
+            if (intId == 0) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+        }
+        catch (NumberFormatException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        Player player = this.playerService.findById(Long.valueOf(id));
+        if (player == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        }
+        return new ResponseEntity<>(player, HttpStatus.OK);
     }
 
 

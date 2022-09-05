@@ -2,10 +2,12 @@ package com.game.service;
 
 import com.game.entity.Player;
 import com.game.repository.PlayerRepository;
+import com.game.service.exceptions.PlayerNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -18,7 +20,11 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     public Player findById(Long id) {
-        return playerRepository.findById(id).get();
+        Optional<Player> player = playerRepository.findById(id);
+        if (player.isPresent()) {
+            return player.get();
+        }
+        else return null;
     }
 
     public List<Player> findAll() {
