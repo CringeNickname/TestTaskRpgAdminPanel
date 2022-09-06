@@ -122,8 +122,19 @@ public class PlayerRestController {
 
     @RequestMapping(value = "", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Player> createPlayer(@RequestBody Player playerToCreate) {
+        // Setting proper ID to created player.
         List<Player> players = this.playerService.findAll();
-        playerToCreate.setId((long) (players.size() + 1));
+        boolean idIsSet = false;
+        for (int i = 0; i < players.size(); i++) {
+            if (players.get(i).getId() != i + 1) {
+                playerToCreate.setId((long) (i + 1));
+                idIsSet = true;
+                break;
+            }
+        }
+        if (!idIsSet) {
+            playerToCreate.setId((long) (players.size() + 1));
+        }
 
         // Check if all necessary field are in data params.
         if (playerToCreate.getName() == null
